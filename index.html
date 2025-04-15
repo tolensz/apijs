@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Autenticación por dispositivo</title>
+</head>
+<body>
+  <h1>Verificando dispositivo...</h1>
+
+  <script>
+    const API_BASE = "https://tu-api.railway.app"; // la URL que te da Railway
+const API_VALIDAR = `${API_BASE}/validar`;
+const API_REGISTRAR = `${API_BASE}/registrar`;
+
+
+    function generarClaveUnica() {
+      return crypto.randomUUID(); // genera una clave como '3e9c709d-...'
+    }
+
+    async function registrarDispositivo(clave) {
+      await fetch(API_REGISTRAR, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ clave })
+      });
+    }
+
+    async function validarDispositivo(clave) {
+      const res = await fetch(API_VALIDAR, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ clave })
+      });
+
+      const data = await res.json();
+      return data.autorizado === true;
+    }
+
+    async function main() {
+      let clave = localStorage.getItem('claveDispositivo');
+
+      if (!clave) {
+        clave = generarClaveUnica();
+        localStorage.setItem('claveDispositivo', clave);
+        await registrarDispositivo(clave); // registrar por primera vez
+      }
+
+      const autorizado = await validarDispositivo(clave);
+      if (autorizado) {
+        document.body.innerHTML = "<h1>✅ Dispositivo autorizado</h1>";
+        // continuar app...
+      } else {
+        document.body.innerHTML = "<h1>❌ Dispositivo NO autorizado</h1>";
+        // bloquear app o redirigir
+      }
+    }
+
+    main();
+  </script>
+</body>
+</html>
