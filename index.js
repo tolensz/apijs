@@ -46,5 +46,5 @@ app.post('/validar', (req, res) => {
 
 // Servidor corriendo
 app.listen(PORT, () => {
-  console.log(`✅ API corriendo en http://localhost:${PORT}`);
+  console.log(`✅ API corriendo en https://apijs-production.up.railway.app:${PORT}`);
 });
